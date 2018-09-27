@@ -1,2 +1,3 @@
-«ö¤U Button , TextView ·|§ó·s count
-![](https://i.imgur.com/BA8Mw8t.gif)
+<br/>æŒ‰ä¸‹ Button , TextView æœƒæ›´æ–° count</br>
+<img src="https://i.imgur.com/BA8Mw8t.gif" alt="drawing" width="400" height="600"/>
+
