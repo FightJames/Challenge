@@ -7,20 +7,23 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         priceEditText.setOnEditorActionListener { v, actionId, event ->
 
             var text = priceEditText.text.toString()
-            if (!text.equals("")) {
+            if (!text.equals("") && text.matches(Regex("[0-9]*"))) {
                 var origin = text.toString().toDouble()
                 var discountPrice = origin * (seekBar.progress * 0.01)
-                val str: String = String.format("%.2f", discountPrice)
+                val str: String = String.format("$%.2f", discountPrice)
                 discountPirceText.text = str
-                discountNumberText.text = String.format("%.2f", (origin - discountPrice))
+                discountNumberText.text = String.format("$%.2f", (origin - discountPrice))
+            } else {
+                discountPirceText.text = "$0.00"
+                discountNumberText.text = "$0.00"
             }
-
             false
         }
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -30,9 +33,9 @@ class MainActivity : AppCompatActivity() {
                 if (!text.equals("")) {
                     var origin = text.toString().toDouble()
                     var discountPrice = origin * (progress * 0.01)
-                    val str: String = String.format("%.2f", discountPrice)
+                    val str: String = String.format("$%.2f", discountPrice)
                     discountPirceText.text = str
-                    discountNumberText.text = String.format("%.2f", (origin - discountPrice))
+                    discountNumberText.text = String.format("$%.2f", (origin - discountPrice))
                 }
 
             }

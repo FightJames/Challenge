@@ -2,7 +2,6 @@ package com.techapp.james.scalableimageview
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.widget.ImageView
 
@@ -24,12 +23,8 @@ class JamesImageView : ImageView {
     var delty = 0f
     var priPointDis = 0.00
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        Log.d("Image ", event.pointerCount.toString())
-        if (event.pointerCount > 1 && mode != ZOOM) {
-            mode = ZOOM
-            priPointDis = distance(event, priPointDis)
-        }
-        when (event.action) {
+//        Log.d("Image ", event.pointerCount.toString())
+        when (event.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN -> {
                 deltx = event.rawX - this.x
                 delty = event.rawY - this.y
@@ -45,6 +40,13 @@ class JamesImageView : ImageView {
                         zoom(event)
                     }
                 }
+            }
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                if (mode != ZOOM) {
+                    mode = ZOOM
+                    priPointDis = distance(event, priPointDis)
+                }
+//                Log.d("JamesImage ", "Action Pointer Down")
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 mode = DRAGGING
@@ -67,7 +69,7 @@ class JamesImageView : ImageView {
             zoomOut(radio)
         } else {
             zoomIn(radio)
-            Log.d("Image ", "Zoom In")
+//            Log.d("Image ", "Zoom In")
         }
         priPointDis = lastpointDis
     }
@@ -75,14 +77,14 @@ class JamesImageView : ImageView {
     fun zoomIn(radio: Double) {
         var increaseWidth = (this.width * radio - this.width) / 2
         var increaseHeight = (this.height * radio - this.height) / 2
-        Log.d("Zoom In ", "$increaseWidth $increaseHeight $radio")
+//        Log.d("Zoom In ", "$increaseWidth $increaseHeight $radio")
         setFrame((left - increaseWidth).toInt(), (top - increaseHeight).toInt(), (right + increaseWidth).toInt(), (bottom + increaseHeight).toInt())
     }
 
     fun zoomOut(radio: Double) {
         var decreaseWidth = (this.width * radio - this.width) / 2
         var decreaseHeight = (this.height * radio - this.height) / 2
-        Log.d("Zoom In ", "$decreaseWidth $decreaseHeight $radio")
+//        Log.d("Zoom In ", "$decreaseWidth $decreaseHeight $radio")
         setFrame((left - decreaseWidth).toInt(), (top - decreaseHeight).toInt(), (right + decreaseWidth).toInt(), (bottom + decreaseHeight).toInt())
     }
 }
