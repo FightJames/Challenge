@@ -34,7 +34,6 @@ class JamesImageHelper {
     }
 
     fun locateImageView(imageView: ImageView) {
-
         var diagonalPointX = imageView.x + imageView.width
         var diagonalPointY = imageView.y + imageView.height
         var parent = imageView.parent as View

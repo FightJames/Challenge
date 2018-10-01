@@ -2,7 +2,6 @@ package com.techapp.james.scalableimageview
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
@@ -17,7 +16,6 @@ class JamesImageView : ImageView {
 
     var mode = NONE
     var reDrawLittleMap: ReDrawListener? = null
-
     var minWidth: Float = 300f
     var minHeight: Float = 300f
 
@@ -58,7 +56,7 @@ class JamesImageView : ImageView {
                 }
             }
             MotionEvent.ACTION_UP -> {
-                Log.d("Image", event.action.toString())
+//                Log.d("Image", event.action.toString())
                 mode = NONE
             }
         }
