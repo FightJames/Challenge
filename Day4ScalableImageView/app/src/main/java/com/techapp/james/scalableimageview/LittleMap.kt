@@ -26,14 +26,16 @@ class LittleMap : View, ReDrawListener {
         paint.style = Paint.Style.STROKE
         paint.color = Color.RED
         paint.strokeWidth = 10f
+//        canvas.drawLine(0f, 0f, 300f, 300f, paint)
 
-        Log.d("Little", " onDraw")
         elementList.forEach { e ->
+
             var xRadio = e.x / parent.width
             var yRadio = e.y / parent.height
-            var insideX = x + width * xRadio
-            var insideY = y + width * yRadio
-            canvas.drawCircle(insideX, insideY, 2f, paint)
+            var insideX = width * xRadio
+            var insideY = height * yRadio
+            Log.d("Little", " onDraw $insideX $insideY")
+            canvas.drawCircle(insideX, insideY, 10f, paint)
         }
 
     }
