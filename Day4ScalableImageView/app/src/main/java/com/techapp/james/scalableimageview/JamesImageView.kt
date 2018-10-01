@@ -16,8 +16,10 @@ class JamesImageView : ImageView {
     }
 
     var mode = NONE
-
     var reDrawLittleMap: ReDrawListener? = null
+
+    var minWidth: Float = 300f
+    var minHeight: Float = 300f
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet)
@@ -80,9 +82,10 @@ class JamesImageView : ImageView {
     fun zoomCal(radio: Double) {
         var width = this.width * radio
         var height = this.height * radio
-        if (width < 300 || height < 300) {
+        if (width < minWidth || height < minHeight) {
             return
         }
+        // max zoomIn
         if (width > (parent as View).width * 3 || height > (parent as View).height * 3) {
             return
         }
