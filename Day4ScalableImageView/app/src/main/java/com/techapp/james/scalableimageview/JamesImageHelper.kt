@@ -1,5 +1,6 @@
 package com.techapp.james.scalableimageview
 
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
@@ -8,43 +9,28 @@ class JamesImageHelper {
     var deltX = 0f
     var deltY = 0f
 
-    companion object {
-        val X = "x"
-        val Y = "Y"
-    }
-
     constructor()
 
-//    fun setDelt(event: MotionEvent, imageView: ImageView) {
-//        deltX = event.rawX - imageView.x
-//        deltY = event.rawY - imageView.y
-//    }
-
-    fun move(imageView: ImageView, event: MotionEvent): Map<String, Float> {
-        var x = 0f
-        var y = 0f
-        x = event.rawX - deltX
-        y = event.rawY - deltY
+    fun move(imageView: ImageView, event: MotionEvent) {
+        var parent = imageView.parent as View
+        imageView.x = event.rawX - deltX
+        imageView.y = event.rawY - deltY
         if (!isZoomWidthOrHeightOverParent(imageView)) {
             if (isOverLeft(imageView)) {
-                x = 0f
+                imageView.x = 0f
             }
             if (isOverTop(imageView)) {
-                y = 0f
+                imageView.y = 0f
             }
             if (isOverRight(imageView)) {
-                var fixX = (imageView.x + imageView.width) - (imageView.parent as View).width
-                x = imageView.x - fixX
+                var fixX = (imageView.x + imageView.width) - (parent.x + parent.width)
+                imageView.x = imageView.x - fixX
             }
             if (isOverBottom(imageView)) {
-                var fixY = (imageView.y + imageView.height) - (imageView.parent as View).height
-                y = imageView.y - fixY
+                var fixY = (imageView.y + imageView.height) - (parent.y + parent.height)
+                imageView.y = imageView.y - fixY
             }
         }
-        var map = HashMap<String, Float>()
-        map.put(X, x)
-        map.put(Y, y)
-        return map
     }
 
     fun locateImageView(imageView: ImageView) {

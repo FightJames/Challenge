@@ -40,9 +40,7 @@ class JamesImageView : ImageView {
             MotionEvent.ACTION_MOVE -> {
                 when (mode) {
                     DRAGGING -> {
-                        var map = helper.move(this, event)
-                        this.x = map.get(JamesImageHelper.X)!!
-                        this.y = map.get(JamesImageHelper.Y)!!
+                        helper.move(this, event)
                     }
                     ZOOM -> {
                         zoom(event)
