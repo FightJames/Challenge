@@ -2,7 +2,9 @@ package com.techapp.james.scalableimageview
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
+import android.view.View
 import android.widget.ImageView
 
 class JamesImageView : ImageView {
@@ -15,29 +17,37 @@ class JamesImageView : ImageView {
 
     var mode = NONE
 
+    var reDrawLittleMap: ReDrawListener? = null
+
     constructor(context: Context) : super(context)
     constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    var deltx = 0f
-    var delty = 0f
     var priPointDis = 0.00
+
+    var helper = JamesImageHelper()
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
-//        Log.d("Image ", event.pointerCount.toString())
+        reDrawLittleMap?.reDraw()
         when (event.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN -> {
-                deltx = event.rawX - this.x
-                delty = event.rawY - this.y
-                mode = DRAGGING
+                if (mode == NONE) {
+                    helper.deltX = event.rawX - this.x
+                    helper.deltY = event.rawY - this.y
+                    mode = DRAGGING
+                }
             }
             MotionEvent.ACTION_MOVE -> {
                 when (mode) {
                     DRAGGING -> {
-                        this.x = event.rawX - deltx
-                        this.y = event.rawY - delty
+                        var map = helper.move(this, event)
+                        this.x = map.get(JamesImageHelper.X)!!
+                        this.y = map.get(JamesImageHelper.Y)!!
                     }
                     ZOOM -> {
                         zoom(event)
+                        helper.locateImageView(this)
+
                     }
                 }
             }
@@ -46,10 +56,10 @@ class JamesImageView : ImageView {
                     mode = ZOOM
                     priPointDis = distance(event, priPointDis)
                 }
-//                Log.d("JamesImage ", "Action Pointer Down")
             }
-            MotionEvent.ACTION_POINTER_UP -> {
-                mode = DRAGGING
+            MotionEvent.ACTION_UP -> {
+                Log.d("Image", event.action.toString())
+                mode = NONE
             }
         }
         return true
@@ -65,26 +75,27 @@ class JamesImageView : ImageView {
     fun zoom(event: MotionEvent) {
         var lastpointDis = distance(event, priPointDis)
         var radio = lastpointDis / priPointDis
-        if (priPointDis > lastpointDis) {
-            zoomOut(radio)
-        } else {
-            zoomIn(radio)
-//            Log.d("Image ", "Zoom In")
-        }
+        zoomCal(radio)
         priPointDis = lastpointDis
     }
 
-    fun zoomIn(radio: Double) {
-        var increaseWidth = (this.width * radio - this.width) / 2
-        var increaseHeight = (this.height * radio - this.height) / 2
-//        Log.d("Zoom In ", "$increaseWidth $increaseHeight $radio")
-        setFrame((left - increaseWidth).toInt(), (top - increaseHeight).toInt(), (right + increaseWidth).toInt(), (bottom + increaseHeight).toInt())
-    }
-
-    fun zoomOut(radio: Double) {
-        var decreaseWidth = (this.width * radio - this.width) / 2
-        var decreaseHeight = (this.height * radio - this.height) / 2
-//        Log.d("Zoom In ", "$decreaseWidth $decreaseHeight $radio")
-        setFrame((left - decreaseWidth).toInt(), (top - decreaseHeight).toInt(), (right + decreaseWidth).toInt(), (bottom + decreaseHeight).toInt())
+    fun zoomCal(radio: Double) {
+        var width = this.width * radio
+        var height = this.height * radio
+        if (width < 300 || height < 300) {
+            return
+        }
+        if (width > (parent as View).width * 3 || height > (parent as View).height * 3) {
+            return
+        }
+        var fixWidth = (width - this.width) / 2
+        var fixHeight = (height - this.height) / 2
+        var left = (left - fixWidth).toInt()
+        var right = left + width
+        var top = (top - fixHeight).toInt()
+        var bottom = top + height
+        var rightInt = if (right % 10.00 == 0.00) right.toInt() else right.toInt() + 1
+        var bottomInt = if (bottom % 10.00 == 0.00) bottom.toInt() else bottom.toInt() + 1
+        setFrame(left, top, rightInt, bottomInt)
     }
 }
