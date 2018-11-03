@@ -14,4 +14,8 @@ class MainActivity : AppCompatActivity() {
         littleMap.elementList.add(jamesImage)
         jamesImage.reDrawLittleMap = littleMap
     }
+
+    override fun onStart() {
+        super.onStart()
+    }
 }

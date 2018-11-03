@@ -1,7 +1,10 @@
 package com.techapp.james.scalableimageview
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Point
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
@@ -43,6 +46,7 @@ class JamesImageView : ImageView {
                         helper.move(this, event)
                     }
                     ZOOM -> {
+                        Log.d("TAG", "ZOOM ${x} ${left} $translationX")
                         zoom(event)
                         helper.locateImageView(this)
 
@@ -55,6 +59,10 @@ class JamesImageView : ImageView {
                     priPointDis = distance(event, priPointDis)
                 }
             }
+
+            MotionEvent.ACTION_POINTER_UP -> {
+                mode = NONE
+            }
             MotionEvent.ACTION_UP -> {
 //                Log.d("Image", event.action.toString())
                 mode = NONE
@@ -62,6 +70,7 @@ class JamesImageView : ImageView {
         }
         return true
     }
+
 
     fun distance(event: MotionEvent, default: Double): Double {
         if (event.pointerCount > 1) {
@@ -73,11 +82,16 @@ class JamesImageView : ImageView {
     fun zoom(event: MotionEvent) {
         var lastpointDis = distance(event, priPointDis)
         var radio = lastpointDis / priPointDis
-        zoomCal(radio)
+        zoomCal(radio, event)
+
         priPointDis = lastpointDis
     }
 
-    fun zoomCal(radio: Double) {
+    fun zoomCal(radio: Double, event: MotionEvent) {
+        var midPointX = (event.getX(0) + event.getX(1)) / 2
+        var midPointY = (event.getY(0) + event.getY(1)) / 2
+        Log.d("Event Log", " left is  $left  x is  $x")
+
         var width = this.width * radio
         var height = this.height * radio
         if (width < minWidth || height < minHeight) {
@@ -87,8 +101,10 @@ class JamesImageView : ImageView {
         if (width > (parent as View).width * 3 || height > (parent as View).height * 3) {
             return
         }
-        var fixWidth = (width - this.width) / 2
-        var fixHeight = (height - this.height) / 2
+
+        var fixWidth = (width - this.width) * (1 - ((this.width - midPointX) / this.width))
+        var fixHeight = (height - this.height) * (1 - ((this.height - midPointY) / this.height))
+
         var left = (left - fixWidth).toInt()
         var right = left + width
         var top = (top - fixHeight).toInt()
